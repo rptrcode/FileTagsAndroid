@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
 		}
 	};
 	private ArrayAdapter<String> mAdapter;
-	private BiMap bimap = new BiMap();
+	private BidirectionalMap bimap = new BidirectionalMap();
 	FileDetailviewFragment.TagsUpdatedListener tagsUpdatedListener = new FileDetailviewFragment.TagsUpdatedListener() {
 		@Override
 		public void notifyTagsUpdated(MainActivity.TAG_UPDATE update, String filename, String tag) {

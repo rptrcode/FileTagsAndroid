@@ -13,9 +13,6 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by puttaraju on 23-05-2015.
- */
 public class FileItemView extends LinearLayout {
 	File mFile;
 	TextView textView;

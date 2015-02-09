@@ -5,14 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by puttaraju on 28-05-2015.
- */
-public class BiMap {
+public class BidirectionalMap {
 	Map<String, List<String>> filenameMap = new HashMap<>();
 	Map<String, List<String>> tagnameMap = new HashMap<>();
 
-	BiMap() {
+	BidirectionalMap() {
 	}
 
 	public void put(String filename, String tagname) {

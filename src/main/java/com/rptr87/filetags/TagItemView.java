@@ -7,9 +7,6 @@ import android.widget.TextView;
 
 import com.rptr87.filetagger.R;
 
-/**
- * Created by puttaraju on 23-05-2015.
- */
 public class TagItemView extends LinearLayout {
 	TextView textView;
 

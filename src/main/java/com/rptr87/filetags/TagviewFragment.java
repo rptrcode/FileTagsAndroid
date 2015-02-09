@@ -15,9 +15,6 @@ import com.rptr87.filetagger.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by puttaraju on 28-05-2015.
- */
 public class TagviewFragment extends Fragment {
 	public static final String ARG_TAG_NAME = "tag name";
 	String mTagname;

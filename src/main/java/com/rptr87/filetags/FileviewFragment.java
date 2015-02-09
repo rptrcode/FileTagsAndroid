@@ -16,9 +16,6 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by puttaraju on 25-05-2015.
- */
 public class FileviewFragment extends Fragment {
 	public static LinearLayout filesLayout;
 	public FileDetailviewFragment mFileDetailviewFragment = new FileDetailviewFragment();

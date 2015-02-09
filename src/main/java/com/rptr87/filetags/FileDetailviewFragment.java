@@ -21,10 +21,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by puttaraju on 26-05-2015.
- */
-
 public class FileDetailviewFragment extends Fragment {
 	public static final String ARG_FILE_PATH = "file path";
 	public static String filePath;
