@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/rootLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top"
+    android:orientation="vertical"
+    android:scrollbars="vertical"
+    android:weightSum="1">
+
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.29"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tagnameView"
+        android:layout_weight="0.29"
+        android:textAlignment="center"
+        android:outlineProvider="background"
+        android:capitalize="words"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="382dp"
+        android:id="@+id/taglistView"
+        android:layout_weight="0.69"
+        android:outlineProvider="paddedBounds"/>
+</LinearLayout>
