@@ -16,18 +16,21 @@ import android.widget.Toast;
 
 import com.rptr87.filetagger.R;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class MainActivity extends Activity {
 	static Context appContext;
 	List<String> mDrawerListValues = new ArrayList<>();
+	FileviewFragment mFileviewFragment = new FileviewFragment();
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
-	FileviewFragment mFileviewFragment = new FileviewFragment();
-
-
 	AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -84,7 +87,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
-		mAdapter = new ArrayAdapter<>(this, R.layout.drawer_list_item, mDrawerListValues);
+		mAdapter = new ArrayAdapter<String>(this, R.layout.drawer_list_item, mDrawerListValues);
 		mDrawerList.setAdapter(mAdapter);
 		mDrawerListValues.add("Folder View");
 
@@ -97,6 +100,61 @@ public class MainActivity extends Activity {
 		mFileviewFragment.mFileDetailviewFragment.addListener(tagsUpdatedListener);
 		FragmentManager fragmentManager = getFragmentManager();
 		fragmentManager.beginTransaction().replace(R.id.content_frame, mFileviewFragment).commit();
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		FileOutputStream outputStream;
+		try {
+			outputStream = openFileOutput("filenameMap", Context.MODE_PRIVATE);
+			ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+			oos.writeObject(bimap.getFilenameMap());
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			outputStream = openFileOutput("tagnameMap", Context.MODE_PRIVATE);
+			ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+			oos.writeObject(bimap.getTagnameMap());
+			outputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		try {
+			FileInputStream streamIn = openFileInput("filenameMap");
+			ObjectInputStream objectinputstream = new ObjectInputStream(streamIn);
+			HashMap<String, List<String>> filenameMap = (HashMap) objectinputstream.readObject();
+			bimap.setFilenameMap(filenameMap);
+
+			for (HashMap.Entry<String, List<String>> entry : filenameMap.entrySet()) {
+				List<String> tagList = entry.getValue();
+				if (tagList != null)
+					mDrawerListValues.addAll(tagList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			FileInputStream streamIn = openFileInput("tagnameMap");
+			ObjectInputStream objectinputstream = new ObjectInputStream(streamIn);
+			HashMap<String, List<String>> tagnameMap = (HashMap) objectinputstream.readObject();
+			bimap.setTagnameMap(tagnameMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 
 	}
 

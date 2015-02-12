@@ -3,11 +3,10 @@ package com.rptr87.filetags;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BidirectionalMap {
-	Map<String, List<String>> filenameMap = new HashMap<>();
-	Map<String, List<String>> tagnameMap = new HashMap<>();
+	HashMap<String, List<String>> filenameMap = new HashMap<>();
+	HashMap<String, List<String>> tagnameMap = new HashMap<>();
 
 	BidirectionalMap() {
 	}
@@ -54,4 +53,19 @@ public class BidirectionalMap {
 		return null;
 	}
 
+	HashMap getFilenameMap() {
+		return filenameMap;
+	}
+
+	void setFilenameMap(HashMap map) {
+		filenameMap.putAll(map);
+	}
+
+	HashMap getTagnameMap() {
+		return tagnameMap;
+	}
+
+	void setTagnameMap(HashMap map) {
+		tagnameMap.putAll(map);
+	}
 }
