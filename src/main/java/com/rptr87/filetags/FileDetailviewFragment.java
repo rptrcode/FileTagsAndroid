@@ -1,15 +1,11 @@
 package com.rptr87.filetags;
 
 import android.app.Fragment;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -23,25 +19,22 @@ import java.util.List;
 
 public class FileDetailviewFragment extends Fragment {
 	public static final String ARG_FILE_PATH = "file path";
-	public static String filePath;
-	View mRootView;
-	List<String> mListValues = new ArrayList<>();
-	ArrayAdapter<String> mAdpater;
-	View.OnClickListener openFileBtnClickListener = new View.OnClickListener() {
+	private static String filePath;
+	private View mRootView;
+	private List<String> mListValues = new ArrayList<>();
+	private ArrayAdapter<String> mAdpater;
+
+	public interface TagsUpdatedListener {
+		void notifyTagsUpdated(MainActivity.TAG_UPDATE update, String filename, String tag);
+	}
+
+	private View.OnClickListener openFileBtnClickListener = new View.OnClickListener() {
 		public void onClick(View v) {
-			MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-			String mimeType = mimeTypeMap.getMimeTypeFromExtension(getFileExtension(filePath));
-			Intent viewIntent = new Intent(Intent.ACTION_VIEW);
-			viewIntent.setDataAndType(Uri.parse(filePath), mimeType);
-//			viewIntent.setDataAndType(Uri.parse(filePath), getMimeType(filePath.toLowerCase()));
-			viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			try {
-				MainActivity.appContext.startActivity(viewIntent);
-			} catch (ActivityNotFoundException e) {
-				MainActivity.alert("No handler for this type " + getMimeType(filePath));
-			}
+			FileLauncher fileLauncher = new FileLauncher(filePath);
+			fileLauncher.launch();
 		}
 	};
+
 	private List<FileDetailviewFragment.TagsUpdatedListener> mListeners = new LinkedList<>();
 	View.OnClickListener addTagBtnClickListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -55,16 +48,6 @@ public class FileDetailviewFragment extends Fragment {
 		}
 	};
 
-	static String getFileExtension(String path) {
-		String ext = "";
-		int dotHere = path.lastIndexOf(".");
-		if (dotHere != -1) {
-			ext = path.substring(dotHere + 1);
-		}
-		MainActivity.alert("extension: " + ext);
-		return ext.toLowerCase();
-	}
-
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,11 +60,18 @@ public class FileDetailviewFragment extends Fragment {
 		(mRootView.findViewById(R.id.openFileBtn)).setOnClickListener(openFileBtnClickListener);
 		ListView listView = (ListView) mRootView.findViewById(R.id.listView);
 		mAdpater = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_list_item_1, mListValues);
+		listView.setAdapter(mAdpater);
+
 		MainActivity mainActivity = (MainActivity) getActivity();
 		List<String> list = mainActivity.getTagList(filePath);
-		if (list != null)
+		if (list != null) {
+			mListValues.clear();
 			mListValues.addAll(list);
-		listView.setAdapter(mAdpater);
+			mAdpater.notifyDataSetChanged();
+		} else {
+			mListValues.clear();
+			mAdpater.notifyDataSetChanged();
+		}
 
 		return mRootView;
 	}
@@ -100,36 +90,6 @@ public class FileDetailviewFragment extends Fragment {
 		}
 	}
 
-	String getMimeType(String path) {
-		String type = "";
-		if (path.contains(".doc") || path.contains(".docx")) {
-			type = "application/msword";
-		} else if (path.contains(".pdf")) {
-			type = "application/pdf";
-		} else if (path.contains(".ppt") || path.contains(".pptx")) {
-			type = "application/vnd.ms-powerpoint";
-		} else if (path.contains(".xls") || path.contains(".xlsx")) {
-			type = "application/vnd.ms-excel";
-		} else if (path.contains(".zip") || path.contains(".rar")) {
-			type = "application/x-wav";
-		} else if (path.contains(".rtf")) {
-			type = "application/rtf";
-		} else if (path.contains(".wav") || path.contains(".mp3")) {
-			type = "audio/x-wav";
-		} else if (path.contains(".gif")) {
-			type = "image/gif";
-		} else if (path.contains(".jpg") || path.contains(".jpeg") || path.contains(".png")) {
-			type = "image/jpeg";
-		} else if (path.contains(".txt")) {
-			type = "text/plain";
-		} else if (path.contains(".3gp") || path.contains(".mpg") || path.contains(".mpeg") || path.contains(".mpe") || path.contains(".mp4") || path.contains(".avi")) {
-			type = "video/*";
-		}
-		return type;
-	}
 
-	public interface TagsUpdatedListener {
-		void notifyTagsUpdated(MainActivity.TAG_UPDATE update, String filename, String tag);
-	}
 
 }

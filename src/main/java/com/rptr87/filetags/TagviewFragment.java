@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,10 +18,10 @@ import java.util.List;
 
 public class TagviewFragment extends Fragment {
 	public static final String ARG_TAG_NAME = "tag name";
-	String mTagname;
-	ListView mTagList;
-	ArrayAdapter<String> mAdapter;
-	List<String> mTagListValues = new ArrayList<>();
+	private String mTagname;
+	private ListView mTagList;
+	private ArrayAdapter<String> mAdapter;
+	private List<String> mTagListValues = new ArrayList<>();
 
 	public TagviewFragment() {
 	}
@@ -34,12 +35,25 @@ public class TagviewFragment extends Fragment {
 		TextView textView = (TextView) rootView.findViewById(R.id.tagnameView);
 		textView.setText(mTagname);
 		mTagList = (ListView) rootView.findViewById(R.id.taglistView);
+
+		mAdapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_list_item_1, mTagListValues);
+		mTagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				TextView textView = (TextView) view;
+				String str = textView.getText().toString();
+				FileLauncher fileLauncher = new FileLauncher(str);
+				fileLauncher.launch();
+			}
+		});
+		mTagList.setAdapter(mAdapter);
+
 		MainActivity mainActivity = (MainActivity) getActivity();
 		List<String> list = mainActivity.getFilenameList(mTagname);
 		if (list != null)
 			mTagListValues.addAll(list);
-		mAdapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_list_item_1, mTagListValues);
-		mTagList.setAdapter(mAdapter);
+		mAdapter.notifyDataSetChanged();
 
 		return rootView;
 	}

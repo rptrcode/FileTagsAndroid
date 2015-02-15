@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -16,10 +17,6 @@ import android.widget.Toast;
 
 import com.rptr87.filetagger.R;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,13 +50,13 @@ public class MainActivity extends Activity {
 		}
 	};
 	private ArrayAdapter<String> mAdapter;
-	private BidirectionalMap bimap = new BidirectionalMap();
+	private BidirectionalMap mBidirectionalMap = new BidirectionalMap();
 	FileDetailviewFragment.TagsUpdatedListener tagsUpdatedListener = new FileDetailviewFragment.TagsUpdatedListener() {
 		@Override
 		public void notifyTagsUpdated(MainActivity.TAG_UPDATE update, String filename, String tag) {
 			switch (update) {
 				case ADD_TAG:
-					bimap.put(filename, tag);
+					mBidirectionalMap.put(filename, tag);
 					if (!mDrawerListValues.contains(tag)) {
 						mDrawerListValues.add(tag);
 						mAdapter.notifyDataSetChanged();
@@ -67,7 +64,7 @@ public class MainActivity extends Activity {
 
 					break;
 				case REMOVE_TAG:
-					bimap.remove(filename, tag);
+					mBidirectionalMap.remove(filename, tag);
 					if (mDrawerListValues.contains(tag)) {
 						mDrawerListValues.remove(tag);
 						mAdapter.notifyDataSetChanged();
@@ -90,11 +87,15 @@ public class MainActivity extends Activity {
 		mAdapter = new ArrayAdapter<String>(this, R.layout.drawer_list_item, mDrawerListValues);
 		mDrawerList.setAdapter(mAdapter);
 		mDrawerListValues.add("Folder View");
+		mAdapter.notifyDataSetChanged();
 
-		mDrawerLayout.openDrawer(Gravity.LEFT);
+		mDrawerLayout.openDrawer(Gravity.START);
 		appContext = getApplicationContext();
 
 		mDrawerList.setOnItemClickListener(itemClickListener);
+
+
+
 
 
 		mFileviewFragment.mFileDetailviewFragment.addListener(tagsUpdatedListener);
@@ -107,73 +108,46 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 
-		FileOutputStream outputStream;
-		try {
-			outputStream = openFileOutput("filenameMap", Context.MODE_PRIVATE);
-			ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-			oos.writeObject(bimap.getFilenameMap());
-			outputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		try {
-			outputStream = openFileOutput("tagnameMap", Context.MODE_PRIVATE);
-			ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-			oos.writeObject(bimap.getTagnameMap());
-			outputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		SaveRestoreMaps saveRestoreMaps = new SaveRestoreMaps();
+		saveRestoreMaps.save(this, mBidirectionalMap);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-		try {
-			FileInputStream streamIn = openFileInput("filenameMap");
-			ObjectInputStream objectinputstream = new ObjectInputStream(streamIn);
-			HashMap<String, List<String>> filenameMap = (HashMap) objectinputstream.readObject();
-			bimap.setFilenameMap(filenameMap);
+		mBidirectionalMap.clear();
+		SaveRestoreMaps saveRestoreMaps = new SaveRestoreMaps();
+		mBidirectionalMap = saveRestoreMaps.restore(this);
+		HashMap<String, List<String>> filenameMap = mBidirectionalMap.getFilenameMap();
 
-			for (HashMap.Entry<String, List<String>> entry : filenameMap.entrySet()) {
-				List<String> tagList = entry.getValue();
-				if (tagList != null)
-					mDrawerListValues.addAll(tagList);
+		for (HashMap.Entry<String, List<String>> entry : filenameMap.entrySet()) {
+			List<String> tagList = entry.getValue();
+			if (tagList != null) {
+				mDrawerListValues.clear();
+				mDrawerListValues.add("Folder View");
+				mDrawerListValues.addAll(tagList);
+				mAdapter.notifyDataSetChanged();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
-		try {
-			FileInputStream streamIn = openFileInput("tagnameMap");
-			ObjectInputStream objectinputstream = new ObjectInputStream(streamIn);
-			HashMap<String, List<String>> tagnameMap = (HashMap) objectinputstream.readObject();
-			bimap.setTagnameMap(tagnameMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
 	}
 
 	public List<String> getTagList(String filename) {
-		return bimap.get(filename);
+		return mBidirectionalMap.get(filename);
 	}
 
 	public List<String> getFilenameList(String tag) {
-		return bimap.get(tag);
+		return mBidirectionalMap.get(tag);
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_MENU:
-				if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-					mDrawerLayout.closeDrawer(Gravity.LEFT);
+				if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+					mDrawerLayout.closeDrawer(Gravity.START);
 				} else {
-					mDrawerLayout.openDrawer(Gravity.LEFT);
+					mDrawerLayout.openDrawer(Gravity.START);
 				}
 				return true;
 

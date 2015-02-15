@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BidirectionalMap {
-	HashMap<String, List<String>> filenameMap = new HashMap<>();
-	HashMap<String, List<String>> tagnameMap = new HashMap<>();
+	private HashMap<String, List<String>> filenameMap = new HashMap<>();
+	private HashMap<String, List<String>> tagnameMap = new HashMap<>();
 
 	BidirectionalMap() {
 	}
@@ -53,19 +53,24 @@ public class BidirectionalMap {
 		return null;
 	}
 
-	HashMap getFilenameMap() {
+	HashMap<String, List<String>> getFilenameMap() {
 		return filenameMap;
 	}
 
-	void setFilenameMap(HashMap map) {
+	void setFilenameMap(HashMap<String, List<String>> map) {
 		filenameMap.putAll(map);
 	}
 
-	HashMap getTagnameMap() {
+	HashMap<String, List<String>> getTagnameMap() {
 		return tagnameMap;
 	}
 
-	void setTagnameMap(HashMap map) {
+	void setTagnameMap(HashMap<String, List<String>> map) {
 		tagnameMap.putAll(map);
+	}
+
+	void clear() {
+		filenameMap.clear();
+		tagnameMap.clear();
 	}
 }
