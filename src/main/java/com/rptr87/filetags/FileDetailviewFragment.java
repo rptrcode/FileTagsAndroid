@@ -1,11 +1,13 @@
 package com.rptr87.filetags;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -55,18 +57,31 @@ public class FileDetailviewFragment extends Fragment {
 		TextView textView = (TextView) mRootView.findViewById(R.id.textView);
 		filePath = getArguments().getString(ARG_FILE_PATH);
 		textView.setText(filePath);
-
 		(mRootView.findViewById(R.id.addTagBtn)).setOnClickListener(addTagBtnClickListener);
 		(mRootView.findViewById(R.id.openFileBtn)).setOnClickListener(openFileBtnClickListener);
-		ListView listView = (ListView) mRootView.findViewById(R.id.listView);
+		ListView tagListView = (ListView) mRootView.findViewById(R.id.listView);
 		mAdpater = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_list_item_1, mListValues);
-		listView.setAdapter(mAdpater);
+		tagListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				TextView textView = (TextView) view;
+				String str = textView.getText().toString();
+				Fragment tagviewFragment = new TagviewFragment();
+				Bundle args = new Bundle();
+				args.putString(TagviewFragment.ARG_TAG_NAME, str);
+				tagviewFragment.setArguments(args);
+				FragmentManager fragmentManager = getFragmentManager();
+				fragmentManager.beginTransaction().replace(R.id.content_frame, tagviewFragment).commit();
+			}
+		});
+		tagListView.setAdapter(mAdpater);
 
 		MainActivity mainActivity = (MainActivity) getActivity();
-		List<String> list = mainActivity.getTagList(filePath);
-		if (list != null) {
+		List<String> tagList = mainActivity.getTagList(filePath);
+		if (tagList != null) {
 			mListValues.clear();
-			mListValues.addAll(list);
+			mListValues.addAll(tagList);
 			mAdpater.notifyDataSetChanged();
 		} else {
 			mListValues.clear();
