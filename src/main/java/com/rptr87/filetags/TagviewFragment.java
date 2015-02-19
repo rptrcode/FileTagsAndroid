@@ -1,6 +1,7 @@
 package com.rptr87.filetags;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -36,14 +37,28 @@ public class TagviewFragment extends Fragment {
 		textView.setText(mTagname);
 		mTagList = (ListView) rootView.findViewById(R.id.taglistView);
 
-		mAdapter = new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_list_item_1, mTagListValues);
+		mAdapter = new ArrayAdapter<String>(MainActivity.appContext, R.layout.tag_item, R.id.fileName, mTagListValues) {
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				View view = super.getView(position, convertView, parent);
+				TextView text1 = (TextView) view.findViewById(R.id.fileName);
+				text1.setTextColor(Color.BLACK);
+				TextView text2 = (TextView) view.findViewById(R.id.filePath);
+				text1.setTextColor(Color.BLACK);
+				String filePath = mTagListValues.get(position);
+				String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+				text1.setText(fileName);
+				text2.setText(filePath);
+				return view;
+			}
+		};
+
 		mTagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				TextView textView = (TextView) view;
-				String str = textView.getText().toString();
-				FileLauncher fileLauncher = new FileLauncher(str);
+				TextView filePath = (TextView) view.findViewById(R.id.filePath);
+				FileLauncher fileLauncher = new FileLauncher(filePath.getText().toString());
 				fileLauncher.launch();
 			}
 		});

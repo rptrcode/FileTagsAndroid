@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
@@ -93,9 +92,6 @@ public class MainActivity extends Activity {
 		appContext = getApplicationContext();
 
 		mDrawerList.setOnItemClickListener(itemClickListener);
-
-
-
 
 
 		mFileviewFragment.mFileDetailviewFragment.addListener(tagsUpdatedListener);

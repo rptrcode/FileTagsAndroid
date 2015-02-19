@@ -25,18 +25,12 @@ public class FileDetailviewFragment extends Fragment {
 	private View mRootView;
 	private List<String> mListValues = new ArrayList<>();
 	private ArrayAdapter<String> mAdpater;
-
-	public interface TagsUpdatedListener {
-		void notifyTagsUpdated(MainActivity.TAG_UPDATE update, String filename, String tag);
-	}
-
 	private View.OnClickListener openFileBtnClickListener = new View.OnClickListener() {
 		public void onClick(View v) {
 			FileLauncher fileLauncher = new FileLauncher(filePath);
 			fileLauncher.launch();
 		}
 	};
-
 	private List<FileDetailviewFragment.TagsUpdatedListener> mListeners = new LinkedList<>();
 	View.OnClickListener addTagBtnClickListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -105,6 +99,9 @@ public class FileDetailviewFragment extends Fragment {
 		}
 	}
 
+	public interface TagsUpdatedListener {
+		void notifyTagsUpdated(MainActivity.TAG_UPDATE update, String filename, String tag);
+	}
 
 
 }

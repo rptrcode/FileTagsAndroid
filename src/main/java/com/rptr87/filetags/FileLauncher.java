@@ -1,10 +1,8 @@
 package com.rptr87.filetags;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.webkit.MimeTypeMap;
 
 import java.io.File;
 
